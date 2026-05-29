@@ -1,0 +1,29 @@
+trigger:
+ branches:
+   include:
+     - main
+
+pool: B17_AgentPool
+
+stages:
+  - stage: Validation
+    displayName: "Terraform Validation Stage"
+    jobs:
+      - job: TerraformValidate
+        displayName: "Terraform Validate"
+        steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: 'latest'
+          - task: TerraformTask@5
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              backendServiceArm: 'sanjay_sc'
+              backendAzureRmStorageAccountName: 'sanjaystg'
+              backendAzureRmContainerName: 'sancontainer'
+              backendAzureRmKey: 'tf/terraform.tfstate'
+          - task: TerraformTask@5
+            inputs:
+              provider: 'azurerm'
+              command: 'validate'
